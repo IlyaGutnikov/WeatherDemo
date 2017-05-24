@@ -16,6 +16,9 @@ public class GameManager : SingletonGameObject<GameManager>
     private string weatherURL =
         "http://api.openweathermap.org/data/2.5/find?lat=58.02&lon=56.3&cnt=SECONDS&appid=51805bdd8e9120e6e0ab93ad818af091";
 
+    [SerializeField]
+    private WeatherListScrollView scrollView;
+
     #region BASIC
 
     // Use this for initialization
@@ -80,9 +83,9 @@ public class GameManager : SingletonGameObject<GameManager>
 
         if (PlayerPrefs.HasKey(weatherKey))
         {
-            parseJson(PlayerPrefs.GetString(weatherKey));
+            scrollView.DeleteAllWeatherListItems();
 
-            //TODO to table
+            scrollView.AddAllWeatherListItems(parseJson(PlayerPrefs.GetString(weatherKey)));
 
             PlayerPrefs.DeleteKey(weatherKey);
         }

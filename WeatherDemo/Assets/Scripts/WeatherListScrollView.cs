@@ -23,53 +23,41 @@ public class WeatherListScrollView : MonoBehaviour {
 		content = scrollRect.content;
 	}
 
-	/// <summary>
-	/// Sets the header text.
-	/// </summary>
-	/// <param name="_text">Text.</param>
 	public void SetHeaderText(string _text) {
 	
 		this.headerText.text = _text;
 	}
-    /*
-
-	/// <summary>
-	/// Добавляет один элемент в ScrollView
-	/// </summary>
-	/// <param name="_mafiaPlayer">Mafia player.</param>
-	public void AddPlayerListItem(MafiaPlayerScript _mafiaPlayer) {
+    
+	public void AddWeatherListItem(CityWithWeather _cityWithWeather) {
 
 		GameObject _scrollViewItem = Instantiate(scrollViewItem) as GameObject;
 		_scrollViewItem.transform.SetParent (content.transform);
 		_scrollViewItem.transform.localScale = new Vector3(1, 1, 1);
-		_scrollViewItem.GetComponent<PlayerListScrollViewItem> ().SetItemInfo (_mafiaPlayer);
+		_scrollViewItem.GetComponent<WeatherListItem> ().SetItemInfo (_cityWithWeather);
 
 	}
 
-	/// <summary>
-	/// Добавляет все элементы в ScrollView
-	/// </summary>
-	/// <param name="_mafiaPlayers">Mafia players.</param>
-	public void AddAllPlayerListItems(List<MafiaPlayerScript> _mafiaPlayers) {
+	public void AddAllWeatherListItems(List<CityWithWeather> _cityWithWeathers) {
 	
-		for (int i = 0; i < _mafiaPlayers.Count; i++) {
+		for (int i = 0; i < _cityWithWeathers.Count; i++) {
 		
-			AddPlayerListItem (_mafiaPlayers [i]);
+			AddWeatherListItem (_cityWithWeathers[i]);
 		}
 	}
 
-	/// <summary>
-	/// Deletes all player list items.
-	/// </summary>
-	public void DeleteAllPlayerListItems() {
+	public void DeleteAllWeatherListItems() {
 
-		PlayerListScrollViewItem[] _playersItemGameObject = content.GetComponentsInChildren<PlayerListScrollViewItem> ();
+		WeatherListItem[] _weatherItemGameObject = content.GetComponentsInChildren<WeatherListItem> ();
 
-		for (int i = 0; i < _playersItemGameObject.Length; i++) {
-		
-			Destroy (_playersItemGameObject [i].gameObject);
-		}
+	    if (_weatherItemGameObject.Length > 0)
+	    {
+	        for (int i = 0; i < _weatherItemGameObject.Length; i++)
+	        {
+
+	            Destroy(_weatherItemGameObject[i].gameObject);
+	        }
+	    }
 	}
-    */
+    
 
 }
