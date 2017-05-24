@@ -8,28 +8,36 @@ public class GameManager : SingletonGameObject<GameManager>
     private float time = 0.0f;
     private int timeInSeconds = 0;
 
+    private string weatherKey = "weatherKey";
+
     bool isPaused = false;
 
     private bool isCountingTime = false;
 
-	// Use this for initialization
-	void Start () {
-		
-        StartTimer();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    private string weatherURL =
+        "http://api.openweathermap.org/data/2.5/find?lat=58.02&lon=56.3&cnt=SECONDS&appid=51805bdd8e9120e6e0ab93ad818af091";
 
-	    if (isCountingTime)
-	    {
+    #region BASIC
+
+    // Use this for initialization
+    void Start()
+    {
+        StartTimer();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        if (isCountingTime)
+        {
             time += Time.deltaTime;
         }
-	}
+    }
 
     void OnDestroy()
     {
-        
+
     }
 
     void OnApplicationQuit()
@@ -61,11 +69,24 @@ public class GameManager : SingletonGameObject<GameManager>
         }
     }
 
+    #endregion
+
+    #region TIMER
+
     private void StartTimer()
     {
         time = 0;
         timeInSeconds = 0;
         isCountingTime = true;
+
+        if (PlayerPrefs.HasKey(weatherKey))
+        {
+            Debug.Log("Get key " + PlayerPrefs.GetString(weatherKey));
+
+            //TODO to table
+
+            PlayerPrefs.DeleteKey(weatherKey);
+        }
     }
 
     private void StopTimer()
@@ -74,8 +95,10 @@ public class GameManager : SingletonGameObject<GameManager>
 
         if (time > 0)
         {
-            timeInSeconds = (int) time % 60;
+            timeInSeconds = (int)time % 60;
             Debug.Log("timeInSeconds " + timeInSeconds);
+
+            StartCoroutine(GetWeather());
         }
         else
         {
@@ -83,5 +106,33 @@ public class GameManager : SingletonGameObject<GameManager>
         }
     }
 
+    #endregion
+
+    #region GET_WEATHER
+
+    IEnumerator GetWeather()
+    {
+
+        weatherURL = weatherURL.Replace("SECONDS", timeInSeconds.ToString());
+        Debug.Log(weatherURL);
+
+        WWW weatherWWW = new WWW(weatherURL);
+
+        yield return weatherWWW;
+        if (weatherWWW.error == null)
+        {
+            Debug.Log(weatherWWW.text);
+
+            PlayerPrefs.SetString(weatherKey, weatherWWW.text);
+            PlayerPrefs.Save();
+
+            Debug.LogWarning(PlayerPrefs.GetString(weatherKey));
+        }
+        else
+        {
+            Debug.Log("ERROR: " + weatherWWW.error);
+        }
+    }
+    #endregion
 
 }
