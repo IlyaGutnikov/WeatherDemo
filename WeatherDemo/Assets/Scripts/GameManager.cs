@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SimpleJSON;
 
 public class GameManager : SingletonGameObject<GameManager>
 {
@@ -9,8 +10,6 @@ public class GameManager : SingletonGameObject<GameManager>
     private int timeInSeconds = 0;
 
     private string weatherKey = "weatherKey";
-
-    bool isPaused = false;
 
     private bool isCountingTime = false;
 
@@ -81,7 +80,7 @@ public class GameManager : SingletonGameObject<GameManager>
 
         if (PlayerPrefs.HasKey(weatherKey))
         {
-            Debug.Log("Get key " + PlayerPrefs.GetString(weatherKey));
+            parseJson(PlayerPrefs.GetString(weatherKey));
 
             //TODO to table
 
@@ -125,14 +124,39 @@ public class GameManager : SingletonGameObject<GameManager>
 
             PlayerPrefs.SetString(weatherKey, weatherWWW.text);
             PlayerPrefs.Save();
-
-            Debug.LogWarning(PlayerPrefs.GetString(weatherKey));
         }
         else
         {
             Debug.Log("ERROR: " + weatherWWW.error);
         }
     }
+    #endregion
+
+    #region PARSE_JSON
+
+    private List<CityWithWeather> parseJson(string _json)
+    {
+        var json = JSON.Parse(_json);
+
+        List<CityWithWeather> cityWithWeathers = new List<CityWithWeather>();
+
+        int listCount = json["list"].Count;
+
+        for (int i = 0; i < listCount; i++)
+        {
+            cityWithWeathers.Add(new CityWithWeather(
+                json["list"][i]["name"].ToString(),
+                json["list"][i]["main"]["temp"].ToString(),
+                json["list"][i]["weather"][0]["main"].ToString()));
+
+            //Debug.Log(json["list"][i]["name"]);
+            //Debug.Log(json["list"][i]["main"]["temp"]);
+            //Debug.Log(json["list"][i]["weather"][0]["main"]);
+        }
+
+        return cityWithWeathers;
+    }
+
     #endregion
 
 }
